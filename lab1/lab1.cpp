@@ -31,7 +31,7 @@ void CreateChildProcess(int processNumber, HANDLE hMutexDup) {
     }
     else {
         std::cout << "Process " << processNumber << " started." << std::endl;
-        CloseHandle(pi.hProcess);
+        processes.push_back(pi.hProcess);
         CloseHandle(pi.hThread);
     }
 }
@@ -96,6 +96,16 @@ void ParentProcess() {
 
     WaitForMultipleObjects(processes.size(), processes.data(), TRUE, INFINITE);
     std::cout << "All processes completed." << std::endl;
+
+    if (!processes.empty()) {
+        WaitForMultipleObjects(processes.size(), processes.data(), TRUE, INFINITE);
+        std::cout << "Al processes completed" << std::endl;
+
+        for (HANDLE h : processes) {
+            CloseHandle(h);
+        }
+    }
+
 
     CloseHandle(hNamedMutex);
     CloseHandle(hSemaphore);
